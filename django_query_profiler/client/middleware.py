@@ -58,6 +58,12 @@ class QueryProfilerMiddleware:
             else:
                 raise ex
 
+        response[ChromePluginData.QUERY_PROFILER_GRAPHQL_OPERATION_NAME] = ''
+        if request.path.startswith("/graphql"):
+            body = json.loads(request.body)
+            operation_name = body["operationName"]
+            response[ChromePluginData.QUERY_PROFILER_GRAPHQL_OPERATION_NAME] = operation_name
+
         # Setting all headers that the chrome plugin require
         response[ChromePluginData.QUERY_PROFILED_SUMMARY_DATA] = json.dumps(query_profiled_data.summary.as_dict())
         response[ChromePluginData.QUERY_PROFILED_DETAILED_URL] = query_profiled_detail_absolute_url
