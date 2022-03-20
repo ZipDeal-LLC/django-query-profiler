@@ -59,7 +59,7 @@ class QueryProfilerMiddleware:
                 raise ex
 
         response[ChromePluginData.QUERY_PROFILER_GRAPHQL_OPERATION_NAME] = ''
-        if request.path.startswith("/graphql"):
+        if request.path.startswith("/graphql") and request.POST:
             body = json.loads(request.body)
             operation_name = body.get("operationName","")
             response[ChromePluginData.QUERY_PROFILER_GRAPHQL_OPERATION_NAME] = operation_name
