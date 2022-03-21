@@ -20,6 +20,9 @@ from django_query_profiler.query_profiler_storage import QueryProfiledData, Quer
 DETAILED_VIEW_EXCEPTION_URL = "django_query_profiler_detailed_view_not_setup_check_redis_and_urls.py"
 DETAILED_VIEW_EXCEPTION_LINK_TEXT = "redis_or_urls.py_not_setup"
 
+from django.conf import settings
+
+QUERY_PROFILER_SKIP_OPERATIONS = getattr(settings, "QUERY_PROFILER_SKIP_OPERATIONS", False)
 
 class QueryProfilerMiddleware:
 
@@ -59,7 +62,7 @@ class QueryProfilerMiddleware:
                 raise ex
 
         response[ChromePluginData.QUERY_PROFILER_GRAPHQL_OPERATION_NAME] = ''
-        if request.path.startswith("/graphql") and request.method == "POST":
+        if request.path.startswith("/graphql") and request.method == "POST" and not QUERY_PROFILER_SKIP_OPERATIONS:
             body = json.loads(request.body)
             operation_name = body.get("operationName", "")
             response[ChromePluginData.QUERY_PROFILER_GRAPHQL_OPERATION_NAME] = operation_name
